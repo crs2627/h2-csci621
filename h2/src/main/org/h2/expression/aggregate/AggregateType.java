@@ -36,6 +36,11 @@ public enum AggregateType {
     MAX,
 
     /**
+     * The aggregate type for SECOND_MAX(expression).
+     */
+    SECOND_MAX,
+
+    /**
      * The aggregate type for AVG(expression).
      */
     AVG,

@@ -117,6 +117,7 @@ public class Aggregate extends AbstractAggregate implements ExpressionWithFlags 
         addAggregate("SUM", AggregateType.SUM);
         addAggregate("MIN", AggregateType.MIN);
         addAggregate("MAX", AggregateType.MAX);
+        addAggregate("SECOND_MAX", AggregateType.SECOND_MAX);
         addAggregate("AVG", AggregateType.AVG);
         addAggregate("LISTAGG", AggregateType.LISTAGG);
         // MySQL compatibility: group_concat(expression, delimiter)
@@ -452,6 +453,8 @@ public class Aggregate extends AbstractAggregate implements ExpressionWithFlags 
         case ANY:
         case EVERY:
             return new AggregateDataDefault(aggregateType, type);
+        case SECOND_MAX:
+            return new AggregateDataSecondMax();
         case AVG:
             if (distinct) {
                 break;
@@ -1028,6 +1031,14 @@ public class Aggregate extends AbstractAggregate implements ExpressionWithFlags 
         case MAX:
         case ANY_VALUE:
             break;
+        case SECOND_MAX: {
+            int valueType = type.getValueType();
+            if (valueType != Value.NULL && !DataType.isNumericType(valueType)) {
+                throw DbException.getInvalidValueException(
+                        "SECOND_MAX numeric argument", type.getSQL(0));
+            }
+            break;
+        }
         case STDDEV_POP:
         case STDDEV_SAMP:
         case VAR_POP:
